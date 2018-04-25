@@ -1,1 +1,2 @@
-# newworld server
+# newworld server project
+### tech type nodejs
