@@ -2,19 +2,14 @@
 * @Author: Marte
 * @Date:   2018-04-25 18:01:09
 * @Last Modified by:   Marte
-* @Last Modified time: 2018-04-25 18:01:25
+* @Last Modified time: 2018-04-25 19:11:19
 */
 var express = require('express');
 var router = express.Router();
 var url = require('url');
 var mysql = require('mysql');
-
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'root',
-  database : 'newworld'
-});
+var mysql_setting = require('../mysql');
+var connection = mysql.createConnection(mysql_setting);
 //连接数据库
 connection.connect();
 router.get('/user', function (req, res) {
