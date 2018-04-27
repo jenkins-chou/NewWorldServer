@@ -2,21 +2,19 @@
 * @Author: Marte
 * @Date:   2018-04-25 20:07:24
 * @Last Modified by:   Marte
-* @Last Modified time: 2018-04-26 17:55:17
+* @Last Modified time: 2018-04-27 12:28:27
 */
 
 var express = require('express');
 var router = express.Router();
 var url = require('url');
-var mysql = require('mysql');
-var mysql_setting = require('../mysql_config');
+var connectDB = require('../tool/connectDB');
+connectDB = new connectDB();
 
-var connection = mysql.createConnection(mysql_setting);
-connection.connect();
 //获取所有用户数据
 router.post('/getusers', function (req, res) {
-    var sql = "select * from user";
-    connectDB(sql,function(result){
+    var sql = "select * from user where user_del != 'delete'";
+    connectDB.query(sql,function(result){
         return res.jsonp(result);
     })
 });
@@ -24,43 +22,100 @@ router.post('/getusers', function (req, res) {
 //根据id获取用户信息
 router.post('/getuser',function (req, res) {
     var user_id = req.body.user_id;//获取请求参数中的user_id
-    //console.log("user_id:"+user_id);
-    var sql = "select * from user where user_id = "+user_id;
-    connectDB(sql,function(result){
+    var sql = "select * from user where user_id = "+user_id +" and user_del != 'delete'";
+    connectDB.query(sql,function(result){
+        console.log(result);
         return res.jsonp(result);
     });
 });
+//添加用户
 router.post('/adduser', function (req, res) {
-    res.send("adduser");
+    var sql = "insert into user(user_name,user_pass,user_real_name,user_avatar_url,user_health,user_phone,user_email,user_address,user_slogan,user_status,user_create_time,user_remark,user_del) value (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    var sqlparams = [
+        req.body.user_name,
+        req.body.user_pass,
+        req.body.user_real_name,
+        req.body.user_avatar_url,
+        req.body.user_health,
+        req.body.user_phone,
+        req.body.user_email,
+        req.body.user_address,
+        req.body.user_slogan,
+        req.body.user_status,
+        req.body.user_create_time,
+        req.body.user_remark,
+        'normal' //user_del 状态
+    ]
+    connectDB.add(sql,sqlparams,function(result){
+        return res.jsonp(result);
+    })
 });
-router.post('/updateuser', function (req, res) {
-    res.send("updateuser");
-});
-router.post('/deleteuser', function (req, res) {
-    res.send("deleteuser");
-});
+//更新用户信息
+router.post('/updateuser', function (request, response) {
+    var req = request;
+    var res = response;
+    var user_id = req.body.user_id;
 
-//连接数据库
-function connectDB(sql,callback){
-    console.log("use callback function");
-    connection.query(sql, function (error, data) {
-        console.log("error :"+error);
-        if (error) {
-            var result = {
-                "status": "500",
-                "message": "服务器错误"
+    if (user_id==null) {
+        return res.jsonp("user_id is null! please check!");
+    }
+    //console.log("hahahhah");
+    connectDB.query("select * from user where user_id = "+user_id,function(result){
+        if (result.status=="200") {
+            if (result.data[0]!=null) {
+                console.log(checkUpdateData("dsadsa","adsadsa"));
+                    var user_name = checkUpdateData(req.body.user_name,result.data[0].user_name);
+                    var user_pass = checkUpdateData(req.body.user_pass,result.data[0].user_pass);
+                    var user_real_name = checkUpdateData(req.body.user_real_name,result.data[0].user_real_name);
+                    var user_avatar_url = checkUpdateData(req.body.user_avatar_url,result.data[0].user_avatar_url);
+                    var user_health = checkUpdateData(req.body.user_health,result.data[0].user_health);
+                    var user_phone = checkUpdateData(req.body.user_phone,result.data[0].user_phone);
+                    var user_email = checkUpdateData(req.body.user_email,result.data[0].user_email);
+                    var user_address = checkUpdateData(req.body.user_address,result.data[0].user_address);
+                    var user_slogan = checkUpdateData(req.body.user_slogan,result.data[0].user_slogan);
+                    var user_status = checkUpdateData(req.body.user_status,result.data[0].user_status);
+                    var user_create_time = checkUpdateData(req.body.user_create_time,result.data[0].user_create_time);
+                    var user_remark  = checkUpdateData(req.body.user_remark,result.data[0].user_remark);
+                    var user_del = checkUpdateData(req.body.user_del,result.data[0].user_del);
+                    var sql  =  "update user set user_name = '"+user_name+"' , user_pass = '"+user_pass+"' , user_real_name = '"+user_real_name+"' , user_avatar_url = '"+user_avatar_url+"', user_health = '"+user_health+"' , user_phone = '"+user_phone+"' , user_email = '"+user_email+"' , user_address = '"+user_address+"' , user_slogan = '"+user_slogan+"' , user_status = '"+user_status+"' , user_create_time = '"+user_create_time+"' , user_remark = '"+user_remark+"' , user_del = '"+user_del+"' where user_id = "+user_id;
+                connectDB.update(sql,function(result){
+                    console.log(result);
+                    return res.jsonp(result);
+                })
+            }else{
+                return res.jsonp('没有数据');
             }
-            callback(result);
-        }
-        else{
-            var result = {
-                "status": "200",
-                "message": "success",
-                data:data
-            }
-            callback(result);
-            //
+        }else{
+            return res.jsonp('更新失败');
         }
     })
+});
+router.post('/deleteuser', function (req, res) {
+    var user_id = req.body.user_id;
+    if (user_id==null) {
+        return res.jsonp("user_id is null! please check!");
+    }else{
+        var sql = "update user set user_del = 'delete' where user_id = "+user_id;
+        connectDB.delete(sql,function(result){
+            console.log(result);
+            return res.jsonp(result);
+        })
+    }
+});
+//更新用户时，用于校验是否是否有更新字段值
+function checkUpdateData(target,current){
+    if (target == null||target =="") {
+        return current;
+    }else if(target !=null||target !=""){
+        if (target != current) {
+            return target;
+        }
+    }else{
+        return current;
+    }
 }
+// console.log(checkUpdateData("dsadsa","adsadsa"));
+// console.log(checkUpdateData("","adsadsa"));
+// console.log(checkUpdateData("dsadsa",""));
+// console.log(checkUpdateData("",""));
 module.exports = router;

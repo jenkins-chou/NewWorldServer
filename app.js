@@ -2,7 +2,7 @@
 * @Author: Marte
 * @Date:   2018-04-25 17:30:36
 * @Last Modified by:   Marte
-* @Last Modified time: 2018-04-26 17:11:52
+* @Last Modified time: 2018-04-27 11:37:03
 */
 var bodyParser = require('body-parser');
 var express = require('express');
@@ -26,7 +26,6 @@ app.post('/post',urlencodedParser,function(req,res){
 app.use('/live',live)
 app.use('/video',video)
 app.use('/user',user)
-
 
 app.listen(8888)
 console.log("listene port : 8888");
