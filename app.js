@@ -1,9 +1,4 @@
-/*
-* @Author: Marte
-* @Date:   2018-04-25 17:30:36
-* @Last Modified by:   Marte
-* @Last Modified time: 2018-04-27 11:37:03
-*/
+
 var bodyParser = require('body-parser');
 var express = require('express');
 var app = express();

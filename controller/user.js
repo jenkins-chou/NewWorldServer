@@ -1,9 +1,3 @@
-/*
-* @Author: Marte
-* @Date:   2018-04-25 20:07:24
-* @Last Modified by:   Marte
-* @Last Modified time: 2018-04-27 12:28:27
-*/
 
 var express = require('express');
 var router = express.Router();

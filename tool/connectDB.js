@@ -1,9 +1,3 @@
-/*
-* @Author: Marte
-* @Date:   2018-04-27 09:38:33
-* @Last Modified by:   Marte
-* @Last Modified time: 2018-04-27 12:25:13
-*/
 var mysql = require('mysql');
 var mysql_setting = require('../mysql_config');
 var connection = mysql.createConnection(mysql_setting);
