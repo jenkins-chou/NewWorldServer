@@ -6,15 +6,16 @@ var app = express();
 var live = require("./controller/live")
 var video = require("./controller/video")
 var user = require("./controller/user")
-var urlencodedParser = bodyParser.urlencoded({extended:false})
+//var urlencodedParser = bodyParser.urlencoded({extended:false})
 app.use(express.static('public'));
-app.use(urlencodedParser)
+//app.use(urlencodedParser)//这里使用 urlencodedParser方式
+app.use(bodyParser.json({limit: '1mb'}));  //这里指定参数使用 json 格式
 
 app.get('/', function(req,res){
     res.send('hello this is newworld app server api');
 })
 
-app.post('/post',urlencodedParser,function(req,res){
+app.post('/post',function(req,res){
     console.log("params:"+req.body.params);
     res.send('hello this is post request!');
 })

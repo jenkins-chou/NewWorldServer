@@ -1,10 +1,11 @@
 var mysql = require('mysql');
 var mysql_setting = require('../mysql_config');
-var connection = mysql.createConnection(mysql_setting);
-connection.connect();
+
 function connectDB(){
     //查询函数
     this.query = function(sql,callback){
+        var connection = mysql.createConnection(mysql_setting);
+        connection.connect();
         console.log("connectDB: use callback function");
         connection.query(sql, function (error, data) {
             console.log("error :"+error);
@@ -23,11 +24,14 @@ function connectDB(){
                 }
                 callback(result);
             }
+            connection.end();//释放
         })
     }
 
     //添加函数
     this.add = function(sql,sqlparams,callback){
+        var connection = mysql.createConnection(mysql_setting);
+        connection.connect();
         console.log("");
         connection.query(sql,sqlparams,function(error,data){
             if (error) {
@@ -45,10 +49,13 @@ function connectDB(){
                 }
                 callback(result);
             }
+            connection.end();//释放
         })
     }
     //更新函数
     this.update = function(sql,callback){
+        var connection = mysql.createConnection(mysql_setting);
+        connection.connect();
         connection.query(sql,function(error,data){
             if (error) {
                 var result = {
@@ -65,12 +72,15 @@ function connectDB(){
                 }
                 callback(result);
             }
+            connection.end();
         });
     }
 
     //删除函数
     this.delete = function(sql,callback){
+        var connection = mysql.createConnection(mysql_setting);
         connection.query(sql,function(error,data){
+            connection.connect();
             if (error) {
                 var result = {
                     "status":"500",
@@ -86,6 +96,7 @@ function connectDB(){
                 }
                 callback(result);
             }
+            connection.end();
         });
     }
 }

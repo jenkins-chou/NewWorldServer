@@ -5,9 +5,20 @@ var url = require('url');
 var connectDB = require('../tool/connectDB');
 connectDB = new connectDB();
 
+router.post('/login',function (req, res) {
+    var user_name = req.body.user_name;
+    var user_pass = req.body.user_pass;
+    console.log(user_name);
+    console.log(user_pass);
+    var sql = "select * from user where user_name = '"+user_name+"' and user_pass = '"+user_pass+"'";
+    connectDB.query(sql,function(result){
+        //result.data[0]!=null;
+        return res.jsonp(result);
+    })
+});
 //获取所有用户数据
 router.post('/getusers', function (req, res) {
-    var sql = "select * from user where user_del != 'delete'";
+    var sql = "selectone * from user where user_del != 'delete'";
     connectDB.query(sql,function(result){
         return res.jsonp(result);
     })
@@ -22,8 +33,12 @@ router.post('/getuser',function (req, res) {
         return res.jsonp(result);
     });
 });
+
+
+
 //添加用户
 router.post('/adduser', function (req, res) {
+
     var sql = "insert into user(user_name,user_pass,user_real_name,user_avatar_url,user_health,user_phone,user_email,user_address,user_slogan,user_status,user_create_time,user_remark,user_del) value (?,?,?,?,?,?,?,?,?,?,?,?,?)";
     var sqlparams = [
         req.body.user_name,
@@ -40,9 +55,33 @@ router.post('/adduser', function (req, res) {
         req.body.user_remark,
         'normal' //user_del 状态
     ]
-    connectDB.add(sql,sqlparams,function(result){
-        return res.jsonp(result);
+    var sqlQuery = "select * from user where user_name = '" + req.body.user_name+"'";//用于查询是否存在同名用户的
+    connectDB.query(sqlQuery,function(result){
+        console.log(result);
+        if(result.data[0]!=null){
+            console.log("已经存在用户");
+            var resultexist = {
+                    "status": "201",
+                    "message": "已经存在用户",
+                    "data":[]
+                }
+            return res.jsonp(resultexist);
+        }else{
+            console.log("可注册用户");
+            connectDB.add(sql,sqlparams,function(result){
+                console.log(result);
+                if (result.status=="200") {
+                    var sqlQueryAgain = "select * from user where user_name = '" + req.body.user_name+"'";
+                    connectDB.query(sqlQueryAgain,function(resultAgain){
+                        return res.jsonp(resultAgain);
+                    })
+                }else{
+                    return res.jsonp(result);
+                }
+            })
+        }
     })
+
 });
 //更新用户信息
 router.post('/updateuser', function (request, response) {
