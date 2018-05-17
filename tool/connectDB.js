@@ -33,6 +33,7 @@ function connectDB(){
         var connection = mysql.createConnection(mysql_setting);
         connection.connect();
         console.log("");
+
         connection.query(sql,sqlparams,function(error,data){
             if (error) {
                 console.log("error:"+error);

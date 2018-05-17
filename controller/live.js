@@ -39,6 +39,13 @@ router.post('/addlive', function (req, res) {
 router.post('/updatelive', function (req, res) {
     res.send("updatelive");
 });
+
+router.post('/removelive',function(req,res){
+    var sql = "update live set live_status = 'stop' where live_name = '"+req.body.live_name+"'" + " and live_author_id = '"+live_author_id + "'";
+    connectDB.update(sql,function(result){
+        return res.jsonp(result);
+    })
+});
 router.post('/deletelive', function (req, res) {
     var live_id = req.body.live_id;
     if (live_id==null||live_id=="") {
