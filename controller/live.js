@@ -7,7 +7,7 @@ var connectDB = require('../tool/connectDB');
 connectDB = new connectDB();
 
 router.post('/getlives', function (req, res) {
-    var sql = "select * from live where live_del != 'delete'";
+    var sql = "select * from live where live_del != 'delete' and live_status != 'stop'";
     connectDB.query(sql,function(result){
         console.log(result);
         return res.jsonp(result);
