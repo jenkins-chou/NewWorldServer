@@ -7,6 +7,7 @@ var live = require("./controller/live")
 var video = require("./controller/video")
 var user = require("./controller/user")
 var movie = require("./controller/movie")
+var mv = require("./controller/mv")
 //var urlencodedParser = bodyParser.urlencoded({extended:false})
 app.use(express.static('public'));
 //app.use(urlencodedParser)//这里使用 urlencodedParser方式
@@ -24,6 +25,7 @@ app.use('/live',live)
 app.use('/video',video)
 app.use('/user',user)
 app.use('/movie',movie)
+app.use('/mv',mv)
 
 app.listen(8888)
 console.log("listene port : 8888");

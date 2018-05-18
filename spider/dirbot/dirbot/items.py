@@ -21,4 +21,12 @@ class Movie(Item):
     image = Field()#图片
     url = Field()#电影链接
 
+class Mv(Item):
+
+    name = Field()#名称
+    url = Field()#链接
+    image = Field()#图片
+    count = Field()#次数
+
+
 
