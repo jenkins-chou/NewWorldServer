@@ -41,7 +41,7 @@ router.post('/updatelive', function (req, res) {
 });
 
 router.post('/removelive',function(req,res){
-    var sql = "update live set live_status = 'stop' where live_name = '"+req.body.live_name+"'" + " and live_author_id = '"+live_author_id + "'";
+    var sql = "update live set live_status = 'stop' where live_name = '"+req.body.live_name+"'" + " and live_author_id = '"+req.body.live_author_id + "'";
     connectDB.update(sql,function(result){
         return res.jsonp(result);
     })
